@@ -34,6 +34,11 @@ static std::string Username = "";
 
 extern "C"
 {
+	DLLEXPORT bool Login()
+	{
+
+	}
+
 	DLLEXPORT bool IsInitialized()				{ return bIsInitialized; }
 
 	DLLEXPORT void SetStatus(bool newStatus)	{ bIsInitialized = newStatus; }
