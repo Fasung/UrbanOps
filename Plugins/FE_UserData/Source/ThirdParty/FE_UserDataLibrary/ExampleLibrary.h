@@ -8,7 +8,16 @@
 
 extern "C"
 {
+	DLLIMPORT void Initialize();
+
 	DLLIMPORT bool IsInitialized();
 
+	DLLIMPORT bool Login();
+
+	// Deprecated: Debug function DELETE THIS
+	// Deprecated: Debug function DELETE THIS
+	// Deprecated: Debug function DELETE THIS
 	DLLIMPORT void SetStatus(bool newStatus);
+
+	DLLIMPORT const char* GetClientAddress();
 }

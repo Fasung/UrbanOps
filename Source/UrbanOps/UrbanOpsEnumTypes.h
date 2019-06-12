@@ -20,6 +20,13 @@ enum class EClass : uint8
 };
 
 UENUM(BlueprintType)
+enum class ECharacterSkins : uint8
+{
+	MALCOLN 	UMETA(DisplayName = "Malcoln"),
+	SHAE 		UMETA(DisplayName = "Shae")
+};
+
+UENUM(BlueprintType)
 enum class EWeaponID : uint8
 {
 	AK47 						UMETA(DisplayName = "AK47"),
