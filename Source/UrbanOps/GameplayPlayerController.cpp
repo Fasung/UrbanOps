@@ -3,6 +3,7 @@
 
 #include "GameplayPlayerController.h"
 #include "PlayerCharacter.h"
+#include "WeaponComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 
@@ -84,6 +85,15 @@ void AGameplayPlayerController::SetupInputComponent()
 
 	InputComponent->BindKey(EKeys::SpaceBar, IE_Pressed, this, &AGameplayPlayerController::OnJumpBegin);
 	InputComponent->BindKey(EKeys::SpaceBar, IE_Released, this, &AGameplayPlayerController::OnJumpFinish);
+
+
+	InputComponent->BindKey(EKeys::One, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotOne);
+	InputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotTwo);
+	InputComponent->BindKey(EKeys::Three, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotThree);
+	InputComponent->BindKey(EKeys::Four, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotFour);
+	InputComponent->BindKey(EKeys::Five, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotFive);
+	InputComponent->BindKey(EKeys::Six, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotSix);
+
 
 	//InputComponent->BindKey(EKeys::LeftShift, IE_Pressed, this, &AGameplayPlayerController::OnSprintBegin);
 	//InputComponent->BindKey(EKeys::LeftShift, IE_Released, this, &AGameplayPlayerController::OnSprintFinish);
@@ -173,72 +183,38 @@ void AGameplayPlayerController::LookUp(float value)
 	}
 }
 
-
-/*
-void AGameplayPlayerController::ServerRun_AddjustPitch_Implementation()
+void AGameplayPlayerController::OnChooseWeaponFromSlotOne()
 {
-	APlayerCharacter* ptrCharacterServer = Cast<APlayerCharacter>(GetPawn());
-
-	if (ptrCharacterServer != NULL)
-	{
-		ptrCharacterServer->PitchReplicated = UKismetMathLibrary::ClampAngle(ptrCharacterServer->GetControlRotation().Pitch, -90.f, 90.0f);
-	}
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotOne Called!"));
+	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_ONE);
 }
 
-
-
-void AGameplayPlayerController::ServerRun_Crounch_Implementation()
+void AGameplayPlayerController::OnChooseWeaponFromSlotTwo()
 {
-	APlayerCharacter* ptrCharacterServer = Cast<APlayerCharacter>(GetPawn());
-
-	if (ptrCharacterServer != NULL)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_Crounch_Implementation Called!"));
-		ptrCharacterServer->Crouch();
-		ptrCharacterServer->bIsCrounchingReplicated = true;
-	}
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotTwo Called!"));
+	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_TWO);
 }
 
-void AGameplayPlayerController::ServerRun_UnCrounch_Implementation()
+void AGameplayPlayerController::OnChooseWeaponFromSlotThree()
 {
-	APlayerCharacter* ptrCharacterServer = Cast<APlayerCharacter>(GetPawn());
-
-	if (ptrCharacterServer != NULL)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_UnCrounch_Implementation Called!"));
-		ptrCharacterServer->UnCrouch();
-		ptrCharacterServer->bIsCrounchingReplicated = false;
-	}
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotThree Called!"));
+	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_THREE);
 }
 
-void AGameplayPlayerController::ServerRun_OnSprintBegin_Implementation()
+void AGameplayPlayerController::OnChooseWeaponFromSlotFour()
 {
-	APlayerCharacter* ptrCharacterServer = Cast<APlayerCharacter>(GetPawn());
-
-	if (ptrCharacterServer != NULL)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintBegin_Implementation Called!"));
-		ptrCharacterServer->GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_RUN_SPEED;
-		ptrCharacterServer->bIsSprintingReplicated = true;
-	}
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotFour Called!"));
+	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_FOUR);
 }
 
-void AGameplayPlayerController::ServerRun_OnSprintFinish_Implementation()
+void AGameplayPlayerController::OnChooseWeaponFromSlotFive()
 {
-	APlayerCharacter* ptrCharacterServer = Cast<APlayerCharacter>(GetPawn());
-
-	if (ptrCharacterServer != NULL)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintFinish_Implementation Called!"));
-		ptrCharacterServer->GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_WALK_SPEED;
-		ptrCharacterServer->bIsSprintingReplicated = false;
-	}
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotFive Called!"));
+	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_FIVE);
 }
 
-bool AGameplayPlayerController::ServerRun_AddjustPitch_Validate()	{ return true; }
-bool AGameplayPlayerController::ServerRun_Crounch_Validate()		{ return true; }
-bool AGameplayPlayerController::ServerRun_UnCrounch_Validate()		{ return true; }
-bool AGameplayPlayerController::ServerRun_OnSprintBegin_Validate()	{ return true; }
-bool AGameplayPlayerController::ServerRun_OnSprintFinish_Validate() { return true; }
-
-*/
+void AGameplayPlayerController::OnChooseWeaponFromSlotSix()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotSix Called!"));
+	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_SIX);
+}

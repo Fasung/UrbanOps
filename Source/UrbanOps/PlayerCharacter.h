@@ -13,36 +13,25 @@ class URBANOPS_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 private:
-
-	// Store the ID of selected class, can be Engineer, Medic, Assault or Sniper
-	// FIND THE RIGHT PLACE FOR THIS VARIABLE, MIGHT BE PlayerState
-	// FIND THE RIGHT PLACE FOR THIS VARIABLE, MIGHT BE PlayerState
-	// FIND THE RIGHT PLACE FOR THIS VARIABLE, MIGHT BE PlayerState
-	/**  */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Details", meta = (AllowPrivateAccess = "true"))
-	EClass SelectedClass;
-
-	/**  */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* MeshNoHead;
 	
 	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent * CameraComponent;
 
-	// FIND THE RIGHT PLACE FOR THIS VARIABLE, MIGHT BE PlayerState
-	// FIND THE RIGHT PLACE FOR THIS VARIABLE, MIGHT BE PlayerState
-	// FIND THE RIGHT PLACE FOR THIS VARIABLE, MIGHT BE PlayerState
 	/**  */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Details", meta = (AllowPrivateAccess = "true"))
-	ECharacterSkins SelectedSkin;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	class UWeaponComponent* WeaponComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Weapon;
 
 public:
 
-
-	static const uint16 MAXIMAL_CROUNCH_SPEED = 225;
-	static const uint16 MAXIMAL_WALK_SPEED = 385;
-	static const uint16 MAXIMAL_RUN_SPEED = 610;
+	static const uint16 MAXIMAL_CROUNCH_SPEED = 215;
+	static const uint16 MAXIMAL_CROUNCH_SPEED_BACKWARDS = 150;
+	static const uint16 MAXIMAL_WALK_SPEED = 350;
+	static const uint16 MAXIMAL_WALK_SPEED_BACKWARDS = 260;
+	static const uint16 MAXIMAL_RUN_SPEED = 600;
 
 	// Category - Current Status 
 
@@ -51,14 +40,12 @@ public:
 	//uint32 bIsDeadReplicated : 1;
 
 	/**  */
-	UPROPERTY(BlueprintReadOnly, Category = "Current Status")
+	UPROPERTY(BlueprintReadOnly, Category = "CurrentStatus")
 	uint32 bIsJumpingReplicated : 1;
 
 	/**  */
-	UPROPERTY(BlueprintReadOnly, Category = "Current Status")
+	UPROPERTY(BlueprintReadOnly, Category = "CurrentStatus")
 	uint32 bIsSprintingReplicated : 1;
-
-
 
 	// Category - Camera 
 	/**  */
@@ -69,8 +56,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Camera")
 	float PitchNotReplicated;
 	
-
 public:
+
+	FORCEINLINE	class UWeaponComponent* GetWeaponComponent() const { return this->WeaponComponent; }
+
+	/** Pick up the item*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
+	void SwapWeaponMeshes(EWeaponID newSelectedWeaponID);
+
+public: /**/
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRun_AddjustPitch();
@@ -91,6 +85,14 @@ public:
 	void ServerRun_OnJumpBegin();
 	void ServerRun_OnJumpBegin_Implementation();
 	bool ServerRun_OnJumpBegin_Validate();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnSprintBegin();
+	void Multicast_OnSprintBegin_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnSprintFinish();
+	void Multicast_OnSprintFinish_Implementation();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnJumpBegin();
@@ -133,5 +135,4 @@ public:
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-
 };

@@ -52,3 +52,30 @@ enum class EWeaponID : uint8
 	NO_WEAPON 					UMETA(DisplayName = "NoWeaponSelected"),
 	WEAPONS_COUNT = NO_WEAPON
 };
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	PISTOL			UMETA(DisplayName = "Pistol"),
+	RIFLE			UMETA(DisplayName = "Rifle"),
+	HANDS			UMETA(DisplayName = "Hands"),
+};
+
+UENUM(BlueprintType)
+enum class ETeam : uint8
+{
+	TEAM_ONE			UMETA(DisplayName = "TeamOne"),
+	TEAM_TWO			UMETA(DisplayName = "TeamTwo")
+};
+
+UENUM(BlueprintType)
+enum class EWeaponSlot : uint8
+{
+	SLOT_ONE			UMETA(DisplayName = "SlotOne"),
+	SLOT_TWO			UMETA(DisplayName = "SlotTwo"),
+	SLOT_THREE			UMETA(DisplayName = "SlotThree"),
+	SLOT_FOUR			UMETA(DisplayName = "SlotFour"),
+	SLOT_FIVE			UMETA(DisplayName = "SlotFive"),
+	SLOT_SIX			UMETA(DisplayName = "SlotSix"),
+	NONE				UMETA(DisplayName = "TeamTwo")
+};

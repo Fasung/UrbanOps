@@ -46,8 +46,20 @@ private:
 	void OnMoveForwardPressed();
 	void OnMoveForwardReleased();
 
-
+	// TODO: RENAME IT 
+	// TODO: RENAME IT 
+	// TODO: RENAME IT 
+	// TODO: RENAME IT 
+	// TODO: RENAME IT 
 	void TEEEEEEEEEEST_SPRIIIIIIIINT();
+
+
+	void OnChooseWeaponFromSlotOne();
+	void OnChooseWeaponFromSlotTwo();
+	void OnChooseWeaponFromSlotThree();
+	void OnChooseWeaponFromSlotFour();
+	void OnChooseWeaponFromSlotFive();
+	void OnChooseWeaponFromSlotSix();
 
 private:
 

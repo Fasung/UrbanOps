@@ -3,10 +3,14 @@
 
 #include "PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "WeaponComponent.h"
 #include "UnrealNetwork.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 
 
+// MAYBE DELETE THIS
+// MAYBE DELETE THIS
+// MAYBE DELETE THIS
 // MAYBE DELETE THIS
 #include "Engine.h"
 
@@ -16,35 +20,25 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
-	//bReplicates = true;
-
-	// Create local player mesh without head
-	MeshNoHead = CreateOptionalDefaultSubobject<USkeletalMeshComponent>("CharacterMeshNoHead");
-	if (MeshNoHead)
-	{
-		MeshNoHead->AlwaysLoadOnClient = true;
-		MeshNoHead->AlwaysLoadOnServer = true;
-		MeshNoHead->bOwnerNoSee = false;
-		MeshNoHead->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
-		MeshNoHead->bCastDynamicShadow = true;
-		MeshNoHead->bAffectDynamicIndirectLighting = true;
-		MeshNoHead->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-		MeshNoHead->SetupAttachment(GetCapsuleComponent());
-		static FName MeshCollisionProfileName(TEXT("CharacterMesh"));
-		MeshNoHead->SetCollisionProfileName(MeshCollisionProfileName);
-		MeshNoHead->SetGenerateOverlapEvents(false);
-		MeshNoHead->SetCanEverAffectNavigation(false);
-	}
 
 	// Create camera component and attach it into mesh socket
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	CameraComponent->AttachToComponent(MeshNoHead, FAttachmentTransformRules::SnapToTargetIncludingScale, "CameraSocket");
+	CameraComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "CameraSocket");
 	CameraComponent->bUsePawnControlRotation = true;
+	
+	// Create weapon component
+	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 
 	// Set up character movement component
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;	
 	GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_WALK_SPEED;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = MAXIMAL_CROUNCH_SPEED;
+
+	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
+	if (Weapon)
+	{
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RifleSocket");
+	}
 }
 
 // Called when the game starts or when spawned
@@ -108,6 +102,7 @@ void APlayerCharacter::ServerRun_OnSprintBegin_Implementation()
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintBegin_Implementation Called!"));
 	GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_RUN_SPEED;
 	bIsSprintingReplicated = true;
+	Multicast_OnSprintBegin();
 }
 
 void APlayerCharacter::ServerRun_OnSprintFinish_Implementation()
@@ -115,6 +110,7 @@ void APlayerCharacter::ServerRun_OnSprintFinish_Implementation()
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintFinish_Implementation Called!"));
 	GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_WALK_SPEED;
 	bIsSprintingReplicated = false;
+	Multicast_OnSprintFinish();
 }
 
 bool APlayerCharacter::ServerRun_AddjustPitch_Validate()		{ return true; }
@@ -142,4 +138,14 @@ void APlayerCharacter::Multicast_OnCrounchBegin_Implementation()
 void APlayerCharacter::Multicast_OnCrounchFinish_Implementation()
 {
 	UnCrouch();
+}
+
+void APlayerCharacter::Multicast_OnSprintBegin_Implementation()
+{
+	bIsSprintingReplicated = true;
+}
+
+void APlayerCharacter::Multicast_OnSprintFinish_Implementation()
+{
+	bIsSprintingReplicated = false;
 }
