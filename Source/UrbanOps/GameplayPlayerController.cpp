@@ -86,6 +86,8 @@ void AGameplayPlayerController::SetupInputComponent()
 	InputComponent->BindKey(EKeys::SpaceBar, IE_Pressed, this, &AGameplayPlayerController::OnJumpBegin);
 	InputComponent->BindKey(EKeys::SpaceBar, IE_Released, this, &AGameplayPlayerController::OnJumpFinish);
 
+	InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &AGameplayPlayerController::OnFirePressed);
+	InputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &AGameplayPlayerController::OnFireReleased);
 
 	InputComponent->BindKey(EKeys::One, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotOne);
 	InputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotTwo);
@@ -95,16 +97,18 @@ void AGameplayPlayerController::SetupInputComponent()
 	InputComponent->BindKey(EKeys::Six, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotSix);
 
 
+
+
 	//InputComponent->BindKey(EKeys::LeftShift, IE_Pressed, this, &AGameplayPlayerController::OnSprintBegin);
 	//InputComponent->BindKey(EKeys::LeftShift, IE_Released, this, &AGameplayPlayerController::OnSprintFinish);
 
 }
 
 
-void AGameplayPlayerController::TEEEEEEEEEEST_SPRIIIIIIIINT()
+void AGameplayPlayerController::ResetMoveForwardInput()
 {
 	bIsSprintButtonPressedOnce = false;
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("TEEEEEEEEEEST_SPRIIIIIIIINT Called!"));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("ResetMoveForwardInput Called!"));
 
 }
 
@@ -124,7 +128,7 @@ void AGameplayPlayerController::OnMoveForwardPressed()
 
 void AGameplayPlayerController::OnMoveForwardReleased()
 {
-	if (!bIsSprintButtonPressedTwice) GetWorld()->GetTimerManager().SetTimer(this->timer, this, &AGameplayPlayerController::TEEEEEEEEEEST_SPRIIIIIIIINT, 0.3f, false);
+	if (!bIsSprintButtonPressedTwice) GetWorld()->GetTimerManager().SetTimer(this->timer, this, &AGameplayPlayerController::ResetMoveForwardInput, 0.3f, false);
 
 	if (bIsSprintButtonPressedTwice)
 	{
@@ -217,4 +221,19 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotSix()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotSix Called!"));
 	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_SIX);
+}
+
+
+void AGameplayPlayerController::OnFirePressed()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnFirePressed Called!"));
+	PtrCharacter->ServerRun_OnFireBegin();// ->SwapWeapons(EWeaponSlot::SLOT_SIX);
+
+}
+
+void AGameplayPlayerController::OnFireReleased()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnFireReleased Called!"));
+	//PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_SIX);
+
 }

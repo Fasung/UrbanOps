@@ -46,12 +46,11 @@ private:
 	void OnMoveForwardPressed();
 	void OnMoveForwardReleased();
 
-	// TODO: RENAME IT 
-	// TODO: RENAME IT 
-	// TODO: RENAME IT 
-	// TODO: RENAME IT 
-	// TODO: RENAME IT 
-	void TEEEEEEEEEEST_SPRIIIIIIIINT();
+	void OnFirePressed();
+	void OnFireReleased();
+
+	// Used for detecting if player wants to sprint or not
+	void ResetMoveForwardInput();
 
 
 	void OnChooseWeaponFromSlotOne();

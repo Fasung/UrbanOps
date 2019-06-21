@@ -56,6 +56,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Camera")
 	float PitchNotReplicated;
 	
+	/** Projectile class to spawn */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	TSubclassOf<class AProjectile> ProjectileClass;
+
 public:
 
 	FORCEINLINE	class UWeaponComponent* GetWeaponComponent() const { return this->WeaponComponent; }
@@ -121,8 +125,10 @@ public: /**/
 	void ServerRun_OnSprintFinish_Implementation();
 	bool ServerRun_OnSprintFinish_Validate();
 
+	void ServerRun_OnFireBegin();
 
 protected:
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

@@ -2,6 +2,7 @@
 
 
 #include "PlayerCharacter.h"
+#include "Projectile.h"
 #include "Camera/CameraComponent.h"
 #include "WeaponComponent.h"
 #include "UnrealNetwork.h"
@@ -112,6 +113,46 @@ void APlayerCharacter::ServerRun_OnSprintFinish_Implementation()
 	bIsSprintingReplicated = false;
 	Multicast_OnSprintFinish();
 }
+
+void APlayerCharacter::ServerRun_OnFireBegin()
+{
+	// try and fire a projectile
+	if (ProjectileClass != NULL)
+	{
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+			const FRotator SpawnRotation = GetControlRotation();
+			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+			//const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+
+			//Set Spawn Collision Handling Override
+			FActorSpawnParameters ActorSpawnParams;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+			// spawn the projectile at the muzzle
+			World->SpawnActor<AProjectile>(ProjectileClass, GetActorLocation(), SpawnRotation, ActorSpawnParams);
+		}
+	}
+
+	// try and play the sound if specified
+	//if (FireSound != NULL)
+	{
+	//	UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+	}
+
+	// try and play a firing animation if specified
+	//if (FireAnimation != NULL)
+	{
+		// Get the animation object for the arms mesh
+	//	UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+	//	if (AnimInstance != NULL)
+		{
+	//		AnimInstance->Montage_Play(FireAnimation, 1.f);
+		}
+	}
+}
+
 
 bool APlayerCharacter::ServerRun_AddjustPitch_Validate()		{ return true; }
 bool APlayerCharacter::ServerRun_OnCrounchBegin_Validate()		{ return true; }
