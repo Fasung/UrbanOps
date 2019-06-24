@@ -125,8 +125,10 @@ public: /**/
 	void ServerRun_OnSprintFinish_Implementation();
 	bool ServerRun_OnSprintFinish_Validate();
 
+	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRun_OnFireBegin();
-
+	void ServerRun_OnFireBegin_Implementation();
+	bool ServerRun_OnFireBegin_Validate();
 protected:
 
 	// Called when the game starts or when spawned

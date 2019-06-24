@@ -49,6 +49,10 @@ private:
 	void OnFirePressed();
 	void OnFireReleased();
 
+	void OnShowScoreTablePressed();
+	void OnShowScoreTableReleased();
+	void OnOpenCloseOptionMenuPressed();
+
 	// Used for detecting if player wants to sprint or not
 	void ResetMoveForwardInput();
 

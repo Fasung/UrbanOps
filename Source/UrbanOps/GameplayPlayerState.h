@@ -18,37 +18,26 @@ class URBANOPS_API AGameplayPlayerState : public APlayerState
 	
 	/** Store the ID of selected skin */
 	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
-	ECharacterSkins SelectedSkinID;
+	ECharacterSkins SkinID;
 
 	/** Store the ID of selected class, can be Engineer, Medic, Assault or Sniper */
 	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
-	EClass SelectedClassID;
+	EClass ClassID;
 
 	/** Store the ID of selected weapon */
 	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
-	ETeam SelectedTeamID;
+	ETeam TeamID;
 
-	/** Store the ID of selected weapon type, could be pistol, rifle, launcher, etc.. */
-	UPROPERTY(BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
-	EWeaponType SelectedWeaponTypeID;
-
-	// DEPRICATED
-	// DEPRICATED
-	// DEPRICATED
-	// DEPRICATED
-	// DEPRICATED
 	/** Store the ID of selected weapon */
-	UPROPERTY(BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
-	EWeaponID SelectedWeaponID;
+	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
+	uint8 Health;
+
+
+public:
+
+	FORCEINLINE bool DecreaseHealth(uint8 value);
 
 public:
 	
-	EWeaponID GetSelectedWeaponID()		const { return this->SelectedWeaponID; }
-
-public:
-
-
-	void SetSelectedWeapon(const class UWeaponComponent * ptrWeaponComponent, const EWeaponSlot selectWeaponFromSlot);
-
-
+	AGameplayPlayerState();
 };

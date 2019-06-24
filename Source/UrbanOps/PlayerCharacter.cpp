@@ -114,7 +114,7 @@ void APlayerCharacter::ServerRun_OnSprintFinish_Implementation()
 	Multicast_OnSprintFinish();
 }
 
-void APlayerCharacter::ServerRun_OnFireBegin()
+void APlayerCharacter::ServerRun_OnFireBegin_Implementation()
 {
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -161,7 +161,7 @@ bool APlayerCharacter::ServerRun_OnJumpBegin_Validate()			{ return true; }
 bool APlayerCharacter::ServerRun_OnJumpFinish_Validate()		{ return true; }
 bool APlayerCharacter::ServerRun_OnSprintBegin_Validate()		{ return true; }
 bool APlayerCharacter::ServerRun_OnSprintFinish_Validate()		{ return true; }
-
+bool APlayerCharacter::ServerRun_OnFireBegin_Validate()			{ return true; }
 
 
 void APlayerCharacter::Multicast_OnJumpBegin_Implementation()

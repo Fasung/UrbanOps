@@ -3,19 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/HUD.h"
-#include "LobbyHUD.generated.h"
+#include "GameFramework/GameSession.h"
+#include "UrbanOpsGameSession.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class URBANOPS_API ALobbyHUD : public AHUD
+class URBANOPS_API AUrbanOpsGameSession : public AGameSession
 {
 	GENERATED_BODY()
 	
-
-public: // Constructor
-
-	ALobbyHUD();
 };

@@ -4,28 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "UrbanOpsEnumTypes.h"
-#include "GameFramework/GameModeBase.h"
-#include "LobbyGameMode.generated.h"
+#include "GameFramework/GameMode.h"
+#include "ZombieGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class URBANOPS_API ALobbyGameMode : public AGameModeBase
+class URBANOPS_API AZombieGameMode : public AGameMode
 {
 	GENERATED_BODY()
-
+	
 	/**  */
 	UPROPERTY(BlueprintReadOnly, Category = "GameModeType", meta = (AllowPrivateAccess = "true"))
 	EGameMode GameModeType;
 
 
-public: // Deprecated function
+public:
 
-	UFUNCTION(BlueprintPure, Category = "DEBUG")
-	FString GetPathDebug();
-
-public: // Constructor
-
-	ALobbyGameMode();
+	AZombieGameMode();
 };

@@ -16,6 +16,9 @@ ALobbyGameMode::ALobbyGameMode()
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 30.0f, FColor::Yellow, TEXT("False!"));
 	}
+
+
+	GameModeType = EGameMode::LOBBY_MODE;
 }
 
 FString ALobbyGameMode::GetPathDebug()

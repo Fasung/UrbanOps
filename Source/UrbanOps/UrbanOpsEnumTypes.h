@@ -79,3 +79,11 @@ enum class EWeaponSlot : uint8
 	SLOT_SIX			UMETA(DisplayName = "SlotSix"),
 	NONE				UMETA(DisplayName = "TeamTwo")
 };
+
+
+UENUM(BlueprintType)
+enum class EGameMode : uint8
+{
+	ZOMBIE_MODE			UMETA(DisplayName = "ZombieMode"),
+	LOBBY_MODE			UMETA(DisplayName = "LobbyMode")
+};

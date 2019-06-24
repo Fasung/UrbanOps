@@ -3,6 +3,7 @@
 
 #include "GameplayPlayerController.h"
 #include "PlayerCharacter.h"
+#include "GameplayHUD.h"
 #include "WeaponComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
@@ -97,6 +98,10 @@ void AGameplayPlayerController::SetupInputComponent()
 	InputComponent->BindKey(EKeys::Six, IE_Pressed, this, &AGameplayPlayerController::OnChooseWeaponFromSlotSix);
 
 
+	InputComponent->BindKey(EKeys::Tab, IE_Pressed, this, &AGameplayPlayerController::OnShowScoreTablePressed);
+	InputComponent->BindKey(EKeys::Tab, IE_Released, this, &AGameplayPlayerController::OnShowScoreTableReleased);
+
+	InputComponent->BindKey(EKeys::P, IE_Pressed, this, &AGameplayPlayerController::OnOpenCloseOptionMenuPressed);
 
 
 	//InputComponent->BindKey(EKeys::LeftShift, IE_Pressed, this, &AGameplayPlayerController::OnSprintBegin);
@@ -160,6 +165,40 @@ void AGameplayPlayerController::OnCrouchExit()
 	PtrCharacter->ServerRun_OnCrounchFinish();
 }
 
+
+void AGameplayPlayerController::OnShowScoreTablePressed()
+{
+	AGameplayHUD* ptrHUD;
+	ptrHUD = Cast<AGameplayHUD>(GetHUD());
+
+	if (ptrHUD != NULL)
+	{
+		ptrHUD->ShowScoresTable();
+	}
+}
+
+void AGameplayPlayerController::OnShowScoreTableReleased()
+{
+	AGameplayHUD* ptrHUD;
+	ptrHUD = Cast<AGameplayHUD>(GetHUD());
+
+	if (ptrHUD != NULL)
+	{
+		ptrHUD->HideScoresTable();
+	}
+}
+
+void AGameplayPlayerController::OnOpenCloseOptionMenuPressed()
+{
+	AGameplayHUD* ptrHUD;
+	ptrHUD = Cast<AGameplayHUD>(GetHUD());
+
+	if (ptrHUD != NULL)
+	{
+		ptrHUD->OpenCloseOptionsMenu();
+	}
+}
+
 void AGameplayPlayerController::Turn(float value)
 {
 	if (PtrCharacter != NULL)
@@ -175,15 +214,9 @@ void AGameplayPlayerController::LookUp(float value)
 	{
 		AddPitchInput(value);
 
-		if (Role == ROLE_Authority)
-		{
-			PtrCharacter->PitchReplicated = UKismetMathLibrary::ClampAngle(PtrCharacter->GetControlRotation().Pitch, -90.f, 90.0f);
-		}
-		else 
-		{
-			PtrCharacter->ServerRun_AddjustPitch();
-			PtrCharacter->PitchNotReplicated = UKismetMathLibrary::ClampAngle(PtrCharacter->GetControlRotation().Pitch, -90.f, 90.0f);
-		}
+		PtrCharacter->ServerRun_AddjustPitch();
+		PtrCharacter->PitchNotReplicated = UKismetMathLibrary::ClampAngle(PtrCharacter->GetControlRotation().Pitch, -90.f, 90.0f);
+
 	}
 }
 

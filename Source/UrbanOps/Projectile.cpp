@@ -6,9 +6,11 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine.h"
+#include "PlayerCharacter.h"
+#include "GameplayPlayerState.h"
 
-
-AProjectile::AProjectile()
+AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	// Use a sphere as a simple collision representation
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
@@ -39,6 +41,9 @@ AProjectile::AProjectile()
 
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	bReplicates = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -53,6 +58,31 @@ void AProjectile::BeginPlay()
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (Role == ROLE_Authority)
+	{
+		if (OtherActor->bCanBeDamaged)
+		{
+			APawn* ptrPawn;
+
+			ptrPawn = Cast<APawn>(OtherActor);
+
+			if (ptrPawn != NULL)
+			{
+				AGameplayPlayerState* ptrPlayerState;
+				ptrPlayerState = Cast<AGameplayPlayerState>(ptrPawn->GetController()->PlayerState);
+				if (ptrPlayerState != NULL)
+				{
+					// If return true, player is dead
+					if (ptrPlayerState->DecreaseHealth(1))
+					{
+					}
+				}
+			}
+		}
+	}
+	else 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("CLIENT FROM Projectile!"));
+
+
 	Destroy();
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Projectile destroyed!"));
 }
