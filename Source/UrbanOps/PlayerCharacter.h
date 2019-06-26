@@ -22,8 +22,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	class UWeaponComponent* WeaponComponent;
 
+	/** The weapon skeletal mesh associated with this Character  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* Weapon;
+	USkeletalMeshComponent* WeaponMesh;
+
+	/** Location on gun mesh where projectiles should spawn */
+	//UPROPERTY(BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	//class USceneComponent* FP_MuzzleLocation;
 
 public:
 
@@ -36,8 +41,8 @@ public:
 	// Category - Current Status 
 
 	/**  */
-	//UPROPERTY(Replicated, BlueprintReadOnly, Category = "Current Status")
-	//uint32 bIsDeadReplicated : 1;
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Current Status")
+	uint32 bIsDead : 1;
 
 	/**  */
 	UPROPERTY(BlueprintReadOnly, Category = "CurrentStatus")
@@ -63,6 +68,9 @@ public:
 public:
 
 	FORCEINLINE	class UWeaponComponent* GetWeaponComponent() const { return this->WeaponComponent; }
+
+	FORCEINLINE	class USkeletalMeshComponent* GetWeaponMesh() const { return this->WeaponMesh; }
+
 
 	/** Pick up the item*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
@@ -126,9 +134,18 @@ public: /**/
 	bool ServerRun_OnSprintFinish_Validate();
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerRun_OnFireBegin();
-	void ServerRun_OnFireBegin_Implementation();
-	bool ServerRun_OnFireBegin_Validate();
+	void ServerRun_OnFireBegin(FVector testLocation, FRotator testRotation);
+	void ServerRun_OnFireBegin_Implementation(FVector testLocation, FRotator testRotation);
+	bool ServerRun_OnFireBegin_Validate(FVector testLocation, FRotator testRotation);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayFireAndWeaponEffect();
+	void Multicast_PlayFireAndWeaponEffect_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_Die();
+	void Multicast_Die_Implementation();
+
 protected:
 
 	// Called when the game starts or when spawned

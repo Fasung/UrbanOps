@@ -34,6 +34,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
 	EWeaponID SelectedWeaponID;
 
+	/** Sound to play each time we fire */
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
+	class USoundBase* FireSound;
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -48,15 +53,17 @@ private:
 
 public: /** Getters */
 
-	FORCEINLINE EWeaponID GetWeaponIDInSlotOne() const		{ return SelectedWeapons[0]; }
-	FORCEINLINE EWeaponID GetWeaponIDInSlotTwo() const		{ return SelectedWeapons[1]; }
-	FORCEINLINE EWeaponID GetWeaponIDInSlotThree() const	{ return SelectedWeapons[2]; }
-	FORCEINLINE EWeaponID GetWeaponIDInSlotFour() const		{ return SelectedWeapons[3]; }
-	FORCEINLINE EWeaponID GetWeaponIDInSlotFive() const		{ return SelectedWeapons[4]; }
-	FORCEINLINE EWeaponID GetWeaponIDInSlotSix() const		{ return SelectedWeapons[5]; }
+	FORCEINLINE EWeaponID GetWeaponIDInSlotOne()		const	{ return SelectedWeapons[0]; }
+	FORCEINLINE EWeaponID GetWeaponIDInSlotTwo()		const	{ return SelectedWeapons[1]; }
+	FORCEINLINE EWeaponID GetWeaponIDInSlotThree()		const	{ return SelectedWeapons[2]; }
+	FORCEINLINE EWeaponID GetWeaponIDInSlotFour()		const	{ return SelectedWeapons[3]; }
+	FORCEINLINE EWeaponID GetWeaponIDInSlotFive()		const	{ return SelectedWeapons[4]; }
+	FORCEINLINE EWeaponID GetWeaponIDInSlotSix()		const	{ return SelectedWeapons[5]; }
 
-	FORCEINLINE EWeaponType GetSelectedWeaponTypeID() const	{ return SelectedWeaponTypeID; }
+	FORCEINLINE EWeaponType GetSelectedWeaponTypeID()	const	{ return SelectedWeaponTypeID; }
+	FORCEINLINE class USoundBase * GetFireSound()		const	{ return FireSound; }
 
+	
 public:
 
 	/** Will swap weapons with weapon in selected weapon slot, if the weapon slot does not containt any weapon*/

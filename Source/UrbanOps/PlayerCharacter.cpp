@@ -16,7 +16,8 @@
 #include "Engine.h"
 
 // Sets default values
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter() :
+	bIsDead(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -35,11 +36,14 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_WALK_SPEED;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = MAXIMAL_CROUNCH_SPEED;
 
-	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
-	if (Weapon)
-	{
-		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RifleSocket");
-	}
+	// Create weapon skeleton component
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RifleSocket");
+
+	// Location on gun mesh where projectiles should spawn
+	//FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
+	//FP_MuzzleLocation->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, "MuzzleSocket");
+	//FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
 }
 
 // Called when the game starts or when spawned
@@ -60,11 +64,13 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 }
 
 
-/*
+
 // bCanEverTick is dissabled !!!
+/*
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 */
 
@@ -77,30 +83,30 @@ void APlayerCharacter::ServerRun_AddjustPitch_Implementation()
 
 void APlayerCharacter::ServerRun_OnCrounchBegin_Implementation()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_Crounch_Implementation Called!"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_Crounch_Implementation Called!"));
 	Multicast_OnCrounchBegin();
 }
 
 void APlayerCharacter::ServerRun_OnCrounchFinish_Implementation()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_UnCrounch_Implementation Called!"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_UnCrounch_Implementation Called!"));
 	Multicast_OnCrounchFinish();
 }
 
 void APlayerCharacter::ServerRun_OnJumpBegin_Implementation()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnJumpBegin_Implementation Called!"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnJumpBegin_Implementation Called!"));
 	Multicast_OnJumpBegin();
 }
 
 void APlayerCharacter::ServerRun_OnJumpFinish_Implementation()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnJumpFinish_Implementation Called!"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnJumpFinish_Implementation Called!"));
 }
 
 void APlayerCharacter::ServerRun_OnSprintBegin_Implementation()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintBegin_Implementation Called!"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintBegin_Implementation Called!"));
 	GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_RUN_SPEED;
 	bIsSprintingReplicated = true;
 	Multicast_OnSprintBegin();
@@ -108,38 +114,36 @@ void APlayerCharacter::ServerRun_OnSprintBegin_Implementation()
 
 void APlayerCharacter::ServerRun_OnSprintFinish_Implementation()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintFinish_Implementation Called!"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Server: ServerRun_OnSprintFinish_Implementation Called!"));
 	GetCharacterMovement()->MaxWalkSpeed = MAXIMAL_WALK_SPEED;
 	bIsSprintingReplicated = false;
 	Multicast_OnSprintFinish();
 }
 
-void APlayerCharacter::ServerRun_OnFireBegin_Implementation()
+void APlayerCharacter::ServerRun_OnFireBegin_Implementation(FVector testLocation, FRotator testRotation)
 {
-	// try and fire a projectile
+	// Try and fire a projectile
 	if (ProjectileClass != NULL)
 	{
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
-			const FRotator SpawnRotation = GetControlRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			//const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-
 			//Set Spawn Collision Handling Override
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+			//FVector tempLoc = WeaponMesh->GetSocketLocation("MuzzleSocket");
+			//FRotator tempRot = WeaponMesh->GetSocketRotation("MuzzleSocket");
+
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("SERVER LOCATION: X %f Y %f Z %f"), testLocation.X, testLocation.Y, testLocation.Z));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("SERVER ROTATION: X %f Y %f Z %f"), testRotation.Pitch, testRotation.Yaw, testRotation.Roll));
 
 			// spawn the projectile at the muzzle
-			World->SpawnActor<AProjectile>(ProjectileClass, GetActorLocation(), SpawnRotation, ActorSpawnParams);
+			World->SpawnActor<AProjectile>(ProjectileClass, testLocation, testRotation, ActorSpawnParams);
 		}
+
 	}
 
-	// try and play the sound if specified
-	//if (FireSound != NULL)
-	{
-	//	UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
+	Multicast_PlayFireAndWeaponEffect();
 
 	// try and play a firing animation if specified
 	//if (FireAnimation != NULL)
@@ -161,7 +165,7 @@ bool APlayerCharacter::ServerRun_OnJumpBegin_Validate()			{ return true; }
 bool APlayerCharacter::ServerRun_OnJumpFinish_Validate()		{ return true; }
 bool APlayerCharacter::ServerRun_OnSprintBegin_Validate()		{ return true; }
 bool APlayerCharacter::ServerRun_OnSprintFinish_Validate()		{ return true; }
-bool APlayerCharacter::ServerRun_OnFireBegin_Validate()			{ return true; }
+bool APlayerCharacter::ServerRun_OnFireBegin_Validate(FVector testLocation, FRotator testRotation)		{ return true; }
 
 
 void APlayerCharacter::Multicast_OnJumpBegin_Implementation()
@@ -189,4 +193,17 @@ void APlayerCharacter::Multicast_OnSprintBegin_Implementation()
 void APlayerCharacter::Multicast_OnSprintFinish_Implementation()
 {
 	bIsSprintingReplicated = false;
+}
+
+void APlayerCharacter::Multicast_PlayFireAndWeaponEffect_Implementation()
+{
+	if (WeaponComponent->GetFireSound() != NULL)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, WeaponComponent->GetFireSound(), GetActorLocation());
+	}
+}
+
+void APlayerCharacter::Multicast_Die_Implementation()
+{
+	bIsDead = true;
 }

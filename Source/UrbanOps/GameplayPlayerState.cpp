@@ -14,7 +14,7 @@ AGameplayPlayerState::AGameplayPlayerState()	:
 bool AGameplayPlayerState::DecreaseHealth(uint8 value)
 {
 	this->Health -= value;
-	if (this->Health < 1) return true;
+	if (this->Health < 1 || this->Health > 10) return true;
 	else return false;
 }
 

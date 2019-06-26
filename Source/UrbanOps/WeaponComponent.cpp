@@ -38,6 +38,16 @@ void UWeaponComponent::BeginPlay()
 	// ...
 }
 
+void UWeaponComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UWeaponComponent, FireSound);
+	//	DOREPLIFETIME(APlayerCharacter, bIsDeadReplicated);
+	//	DOREPLIFETIME(APlayerCharacter, bIsJumpingReplicated);
+	//	DOREPLIFETIME(APlayerCharacter, bIsSprintingReplicated);
+}
+
 
 void UWeaponComponent::SwapWeapons(const EWeaponSlot selectWeaponFromSlot)
 {

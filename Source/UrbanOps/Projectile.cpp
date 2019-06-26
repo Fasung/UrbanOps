@@ -36,7 +36,7 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
 	ProjectileMovement->bShouldBounce = true;
 
 	// Die after 3 seconds by default
-	InitialLifeSpan = 5.0f;
+	InitialLifeSpan = 8.0f;
 
 
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -62,27 +62,40 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 	{
 		if (OtherActor->bCanBeDamaged)
 		{
-			APawn* ptrPawn;
 
-			ptrPawn = Cast<APawn>(OtherActor);
+			APlayerCharacter* ptrActor;
 
-			if (ptrPawn != NULL)
+			ptrActor = Cast<APlayerCharacter>(OtherActor);
+
+			// Actor is player character
+			if (ptrActor != NULL)
 			{
 				AGameplayPlayerState* ptrPlayerState;
-				ptrPlayerState = Cast<AGameplayPlayerState>(ptrPawn->GetController()->PlayerState);
+				ptrPlayerState = Cast<AGameplayPlayerState>(ptrActor->GetController()->PlayerState);
 				if (ptrPlayerState != NULL)
 				{
 					// If return true, player is dead
 					if (ptrPlayerState->DecreaseHealth(1))
 					{
+						ptrActor->bIsDead = true;
+						ptrActor->Multicast_Die();
 					}
 				}
 			}
+			else
+			{
+
+			}
 		}
 	}
-	else 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("CLIENT FROM Projectile!"));
+	//else 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("CLIENT FROM Projectile!"));
 
+	ProjectileMovement->InitialSpeed = 0.f;
+	ProjectileMovement->MaxSpeed = 0.f;
+	ProjectileMovement->Velocity.X = 0.0f;
+	ProjectileMovement->Velocity.Y = 0.0f;
+	ProjectileMovement->Velocity.Z = 0.0f;
 
-	Destroy();
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Projectile destroyed!"));
+//	Destroy();
+//	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Projectile destroyed!"));
 }
