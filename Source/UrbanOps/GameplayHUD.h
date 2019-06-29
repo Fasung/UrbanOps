@@ -19,6 +19,12 @@ class URBANOPS_API AGameplayHUD : public AHUD
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameModeType", meta = (AllowPrivateAccess = "true"))
 	EGameMode GameModeType;
 
+
+public:
+
+	UPROPERTY(BlueprintReadWrite, Category = "GameModeType", meta = (AllowPrivateAccess = "true"))
+	uint8 bShouldUpdateScoreBoard : 1;
+
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerInput")
@@ -29,7 +35,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerInput")
 	void OpenCloseOptionsMenu();
-
 
 public:
 

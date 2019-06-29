@@ -4,17 +4,36 @@
 #include "GameplayPlayerState.h"
 #include "WeaponComponent.h"
 #include "Engine.h"
+#include "UnrealNetwork.h"
 
-AGameplayPlayerState::AGameplayPlayerState()	:
-	Health(10)
+AGameplayPlayerState::AGameplayPlayerState()
 {
 }
 
 
-bool AGameplayPlayerState::DecreaseHealth(uint8 value)
+void AGameplayPlayerState::AddjustKills()
 {
-	this->Health -= value;
-	if (this->Health < 1 || this->Health > 10) return true;
-	else return false;
+	Kills++;
 }
 
+void AGameplayPlayerState::AddjustDeads()
+{
+	Deads++;
+}
+
+void AGameplayPlayerState::AddjustAssists()
+{
+	Assists++;
+}
+
+
+
+void AGameplayPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGameplayPlayerState, Kills);
+	DOREPLIFETIME(AGameplayPlayerState, Deads);
+	DOREPLIFETIME(AGameplayPlayerState, Assists);
+
+}

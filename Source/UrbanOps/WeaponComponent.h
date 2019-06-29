@@ -38,6 +38,9 @@ private:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Weapons", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* FireSound;
 
+	/** Projectile class to spawn */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AProjectile> ProjectileClass;
 
 protected:
 	// Called when the game starts
@@ -52,6 +55,9 @@ private:
 	static FVector GetLeftHandOffSet(EWeaponID index);
 
 public: /** Getters */
+
+	FORCEINLINE TSubclassOf<class AProjectile> GetProjectileClass()		const { return ProjectileClass; }
+
 
 	FORCEINLINE EWeaponID GetWeaponIDInSlotOne()		const	{ return SelectedWeapons[0]; }
 	FORCEINLINE EWeaponID GetWeaponIDInSlotTwo()		const	{ return SelectedWeapons[1]; }

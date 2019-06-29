@@ -3,6 +3,7 @@
 
 #include "GameplayHUD.h"
 
-AGameplayHUD::AGameplayHUD()
+AGameplayHUD::AGameplayHUD() :
+	bShouldUpdateScoreBoard(false)
 {
 }

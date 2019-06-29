@@ -5,15 +5,20 @@
 #include "CoreMinimal.h"
 #include "UrbanOpsEnumTypes.h"
 #include "GameFramework/Character.h"
+#include "UrbanOpsCharacter.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class URBANOPS_API APlayerCharacter : public ACharacter
+class URBANOPS_API APlayerCharacter : public AUrbanOpsCharacter
 {
 	GENERATED_BODY()
 
 private:
 	
+	/** Camera boom positioning the camera behind the character */
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	//class USpringArmComponent* CameraBoom;
+
 	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent * CameraComponent;
@@ -26,9 +31,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* WeaponMesh;
 
-	/** Location on gun mesh where projectiles should spawn */
-	//UPROPERTY(BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
-	//class USceneComponent* FP_MuzzleLocation;
 
 public:
 
@@ -39,18 +41,13 @@ public:
 	static const uint16 MAXIMAL_RUN_SPEED = 600;
 
 	// Category - Current Status 
-
 	/**  */
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Current Status")
-	uint32 bIsDead : 1;
+	UPROPERTY(BlueprintReadOnly, Category = "CurrentStatus")
+	uint8 bIsJumpingReplicated : 1;
 
 	/**  */
 	UPROPERTY(BlueprintReadOnly, Category = "CurrentStatus")
-	uint32 bIsJumpingReplicated : 1;
-
-	/**  */
-	UPROPERTY(BlueprintReadOnly, Category = "CurrentStatus")
-	uint32 bIsSprintingReplicated : 1;
+	uint8 bIsSprintingReplicated : 1;
 
 	// Category - Camera 
 	/**  */
@@ -62,8 +59,8 @@ public:
 	float PitchNotReplicated;
 	
 	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
-	TSubclassOf<class AProjectile> ProjectileClass;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	//TSubclassOf<class AProjectile> ProjectileClass;
 
 public:
 
@@ -141,10 +138,6 @@ public: /**/
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayFireAndWeaponEffect();
 	void Multicast_PlayFireAndWeaponEffect_Implementation();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_Die();
-	void Multicast_Die_Implementation();
 
 protected:
 

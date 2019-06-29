@@ -6,7 +6,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine.h"
-#include "PlayerCharacter.h"
+#include "GameplayPlayerController.h"
+#include "UrbanOpsCharacter.h"
 #include "GameplayPlayerState.h"
 
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer)
@@ -55,47 +56,93 @@ void AProjectile::BeginPlay()
 
 }
 
+void AProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	//AGameplayPlayerState* ptrPlayerState = Cast<AGameplayPlayerState>(ptrActor->GetController()->PlayerState);
+
+	//AUrbanOpsCharacter* ptrActor = Cast<AUrbanOpsCharacter>(OtherActor);
+	//Cast<AUrbanOpsCharacter>(GetOwner());
+}
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (Role == ROLE_Authority)
+	if (OtherActor->bCanBeDamaged)
 	{
-		if (OtherActor->bCanBeDamaged)
+		AUrbanOpsCharacter* ptrActor = Cast<AUrbanOpsCharacter>(OtherActor);
+
+		// Actor is player character
+		if (ptrActor != NULL)
 		{
-
-			APlayerCharacter* ptrActor;
-
-			ptrActor = Cast<APlayerCharacter>(OtherActor);
-
-			// Actor is player character
-			if (ptrActor != NULL)
+			if (Role == ROLE_Authority)
 			{
-				AGameplayPlayerState* ptrPlayerState;
-				ptrPlayerState = Cast<AGameplayPlayerState>(ptrActor->GetController()->PlayerState);
-				if (ptrPlayerState != NULL)
+			// If return true, player is dead
+				if (ptrActor->ApplyDamage(10) && ptrActor->IsDead() == false)
 				{
-					// If return true, player is dead
-					if (ptrPlayerState->DecreaseHealth(1))
+					ptrActor->Die_FromServerOnServerOnly();
+
+					AUrbanOpsCharacter* ptrOwningPlayer = Cast<AUrbanOpsCharacter>(GetOwner());
+					AGameplayPlayerState* ptrPlayerState = Cast<AGameplayPlayerState>(ptrOwningPlayer->GetPlayerState());
+					// Make a check
+					if (ptrPlayerState != NULL)
 					{
-						ptrActor->bIsDead = true;
-						ptrActor->Multicast_Die();
+						// Addjust shooter score here
+						ptrPlayerState->AddjustKills();
 					}
+
+
+					ptrOwningPlayer = Cast<AUrbanOpsCharacter>(OtherActor);
+					ptrPlayerState = Cast<AGameplayPlayerState>(ptrOwningPlayer->GetPlayerState());
+
+					if (ptrPlayerState != NULL)
+					{
+						// Addjust killed player score here
+						ptrPlayerState->AddjustDeads();
+					}
+
 				}
 			}
-			else
-			{
 
-			}
+			// DEBUGING ONLY, DELETE THIS
+			// DEBUGING ONLY, DELETE THIS
+			// DEBUGING ONLY, DELETE THIS
+			// DEBUGING ONLY, DELETE THIS
+			// DEBUGING ONLY, DELETE THIS
+			ProjectileMovement->InitialSpeed = 0.f;
+			ProjectileMovement->MaxSpeed = 0.f;
+			ProjectileMovement->Velocity.X = 0.0f;
+			ProjectileMovement->Velocity.Y = 0.0f;
+			ProjectileMovement->Velocity.Z = 0.0f;
+
+			// Spawn hit effect
+
+			// Destroy the bullet
+			Destroy();
+
+			// Get out from this function
+			return;
+		}
+
+
+		// Hitted actor was not player, lets try again
+
+		// Actor is something else
+		//if (NO VARIABLE) 
+		{
+			// Spawn hit effect
+
+			// Destroy the bullet
+			Destroy();
+
+			// Get out from this function
+			return;
 		}
 	}
-	//else 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("CLIENT FROM Projectile!"));
 
-	ProjectileMovement->InitialSpeed = 0.f;
-	ProjectileMovement->MaxSpeed = 0.f;
-	ProjectileMovement->Velocity.X = 0.0f;
-	ProjectileMovement->Velocity.Y = 0.0f;
-	ProjectileMovement->Velocity.Z = 0.0f;
+	// Hitted object is not actor, probably just static wall or something else
+	// Spawn hit effect
 
-//	Destroy();
-//	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Projectile destroyed!"));
+	// Destroy the bullet
+	Destroy();
 }

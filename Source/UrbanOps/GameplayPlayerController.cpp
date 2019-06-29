@@ -32,22 +32,10 @@ AGameplayPlayerController::AGameplayPlayerController()	:
 void AGameplayPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	/*
-	if (GEngine)	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" W: %f S: %f A: %f D: %f CTRL: %f Shift: %f Space: %f"),
-		InputComponent->GetAxisKeyValue(EKeys::W),
-		InputComponent->GetAxisKeyValue(EKeys::S),
-		InputComponent->GetAxisKeyValue(EKeys::A),
-		InputComponent->GetAxisKeyValue(EKeys::D),
-		InputComponent->GetAxisKeyValue(EKeys::LeftControl),
-		InputComponent->GetAxisKeyValue(EKeys::LeftShift),
-		InputComponent->GetAxisKeyValue(EKeys::SpaceBar)));
-		*/
-
-
 
 	if (PtrCharacter != NULL)
 	{
-		if (!PtrCharacter->bIsDead)
+		if (!PtrCharacter->IsDead())
 		{
 			// Used for movement calculation
 			FRotator newRotator;
@@ -122,7 +110,7 @@ void AGameplayPlayerController::ResetMoveForwardInput()
 
 void AGameplayPlayerController::OnMoveForwardPressed()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		if (!bIsSprintButtonPressedOnce)
 		{
@@ -139,7 +127,7 @@ void AGameplayPlayerController::OnMoveForwardPressed()
 
 void AGameplayPlayerController::OnMoveForwardReleased()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		if (!bIsSprintButtonPressedTwice) GetWorld()->GetTimerManager().SetTimer(this->timer, this, &AGameplayPlayerController::ResetMoveForwardInput, 0.3f, false);
 
@@ -155,7 +143,7 @@ void AGameplayPlayerController::OnMoveForwardReleased()
 
 void AGameplayPlayerController::OnJumpBegin()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->ServerRun_OnJumpBegin();
 	}
@@ -163,7 +151,7 @@ void AGameplayPlayerController::OnJumpBegin()
 
 void AGameplayPlayerController::OnJumpFinish()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->ServerRun_OnJumpFinish();
 	}
@@ -172,7 +160,7 @@ void AGameplayPlayerController::OnJumpFinish()
 
 void AGameplayPlayerController::OnCrouchBegin()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->ServerRun_OnCrounchBegin();
 	}
@@ -180,7 +168,7 @@ void AGameplayPlayerController::OnCrouchBegin()
 
 void AGameplayPlayerController::OnCrouchExit()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->ServerRun_OnCrounchFinish();
 	}
@@ -224,7 +212,7 @@ void AGameplayPlayerController::Turn(float value)
 {
 	if (PtrCharacter != NULL)
 	{
-		if (!PtrCharacter->bIsDead)
+		if (!PtrCharacter->IsDead())
 		{
 			AddYawInput(value);
 		}
@@ -236,7 +224,7 @@ void AGameplayPlayerController::LookUp(float value)
 {
 	if (PtrCharacter != NULL)
 	{
-		if (!PtrCharacter->bIsDead)
+		if (!PtrCharacter->IsDead())
 		{
 			AddPitchInput(value);
 
@@ -249,7 +237,7 @@ void AGameplayPlayerController::LookUp(float value)
 void AGameplayPlayerController::OnChooseWeaponFromSlotOne()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotOne Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_ONE);
 	}
@@ -258,7 +246,7 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotOne()
 void AGameplayPlayerController::OnChooseWeaponFromSlotTwo()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotTwo Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_TWO);
 	}
@@ -267,7 +255,7 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotTwo()
 void AGameplayPlayerController::OnChooseWeaponFromSlotThree()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotThree Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_THREE);
 	}
@@ -276,7 +264,7 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotThree()
 void AGameplayPlayerController::OnChooseWeaponFromSlotFour()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotFour Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_FOUR);
 	}
@@ -285,7 +273,7 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotFour()
 void AGameplayPlayerController::OnChooseWeaponFromSlotFive()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotFive Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 	PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_FIVE);
 }
@@ -294,7 +282,7 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotFive()
 void AGameplayPlayerController::OnChooseWeaponFromSlotSix()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnChooseWeaponFromSlotSix Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		PtrCharacter->GetWeaponComponent()->SwapWeapons(EWeaponSlot::SLOT_SIX);
 	}
@@ -304,7 +292,7 @@ void AGameplayPlayerController::OnChooseWeaponFromSlotSix()
 void AGameplayPlayerController::OnFirePressed()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnFirePressed Called!"));
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		FVector tempLoc = PtrCharacter->GetWeaponMesh()->GetSocketLocation("MuzzleSocket");
 		FRotator tempRot = PtrCharacter->GetWeaponMesh()->GetSocketRotation("MuzzleSocket");
@@ -318,7 +306,7 @@ void AGameplayPlayerController::OnFirePressed()
 
 void AGameplayPlayerController::OnFireReleased()
 {
-	if (!PtrCharacter->bIsDead)
+	if (!PtrCharacter->IsDead())
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("OnFireReleased Called!"));
 	}

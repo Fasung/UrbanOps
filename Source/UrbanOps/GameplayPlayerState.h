@@ -20,6 +20,13 @@ class URBANOPS_API AGameplayPlayerState : public APlayerState
 	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
 	ECharacterSkins SkinID;
 
+	// DEPRICATED
+	// DEPRICATED
+	// DEPRICATED
+	// DEPRICATED
+	// DEPRICATED
+	// DEPRICATED
+	// DEPRICATED
 	/** Store the ID of selected class, can be Engineer, Medic, Assault or Sniper */
 	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
 	EClass ClassID;
@@ -28,14 +35,23 @@ class URBANOPS_API AGameplayPlayerState : public APlayerState
 	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
 	ETeam TeamID;
 
-	/** Store the ID of selected weapon */
-	UPROPERTY(BlueprintReadOnly, Category = "CustomDetails", meta = (AllowPrivateAccess = "true"))
-	uint8 Health;
+	/**  */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	uint8 Kills;
 
+	/**  */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	uint8 Deads;
+
+	/**  */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	uint8 Assists;
 
 public:
 
-	FORCEINLINE bool DecreaseHealth(uint8 value);
+	UFUNCTION()	void AddjustKills();
+	UFUNCTION()	void AddjustDeads();
+	UFUNCTION()	void AddjustAssists();
 
 public:
 	

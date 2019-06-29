@@ -16,8 +16,7 @@
 #include "Engine.h"
 
 // Sets default values
-APlayerCharacter::APlayerCharacter() :
-	bIsDead(false)
+APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -40,10 +39,9 @@ APlayerCharacter::APlayerCharacter() :
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "RifleSocket");
 
-	// Location on gun mesh where projectiles should spawn
-	//FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
-	//FP_MuzzleLocation->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, "MuzzleSocket");
-	//FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
+	// Inherited from UrbanOpsCharacter
+	CharacterType = ECharacterType::PLAYER_CHARACTER;
+
 }
 
 // Called when the game starts or when spawned
@@ -58,9 +56,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerCharacter, PitchReplicated);
-//	DOREPLIFETIME(APlayerCharacter, bIsDeadReplicated);
-//	DOREPLIFETIME(APlayerCharacter, bIsJumpingReplicated);
-//	DOREPLIFETIME(APlayerCharacter, bIsSprintingReplicated);
 }
 
 
@@ -123,7 +118,7 @@ void APlayerCharacter::ServerRun_OnSprintFinish_Implementation()
 void APlayerCharacter::ServerRun_OnFireBegin_Implementation(FVector testLocation, FRotator testRotation)
 {
 	// Try and fire a projectile
-	if (ProjectileClass != NULL)
+	if (WeaponComponent->GetProjectileClass() != NULL)
 	{
 		UWorld* const World = GetWorld();
 		if (World != NULL)
@@ -138,9 +133,13 @@ void APlayerCharacter::ServerRun_OnFireBegin_Implementation(FVector testLocation
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("SERVER ROTATION: X %f Y %f Z %f"), testRotation.Pitch, testRotation.Yaw, testRotation.Roll));
 
 			// spawn the projectile at the muzzle
-			World->SpawnActor<AProjectile>(ProjectileClass, testLocation, testRotation, ActorSpawnParams);
+			AProjectile* ptrProjectile = World->SpawnActor<AProjectile>(WeaponComponent->GetProjectileClass(), testLocation, testRotation, ActorSpawnParams);
+			if (ptrProjectile != NULL)
+			{
+				ptrProjectile->SetOwner(this);
+			}
 		}
-
+		GetPlayerState();
 	}
 
 	Multicast_PlayFireAndWeaponEffect();
@@ -201,9 +200,4 @@ void APlayerCharacter::Multicast_PlayFireAndWeaponEffect_Implementation()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, WeaponComponent->GetFireSound(), GetActorLocation());
 	}
-}
-
-void APlayerCharacter::Multicast_Die_Implementation()
-{
-	bIsDead = true;
 }
